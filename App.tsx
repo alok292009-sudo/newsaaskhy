@@ -17,15 +17,10 @@ import { getSessionUser, subscribeToAuth } from './services/authService';
 
 export default function App() {
   const [lang, setLang] = useState<Language>(Language.ENGLISH);
-  const [user, setUser] = useState<User | null>(null);
-  const [loading, setLoading] = useState(true);
+  const [user, setUser] = useState<User | null>(() => getSessionUser());
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    // Initial check
-    const sessionUser = getSessionUser();
-    setUser(sessionUser);
-    setLoading(false);
-
     // Subscribe to login/logout events for instant UI updates
     const unsubscribe = subscribeToAuth((updatedUser) => {
         setUser(updatedUser);

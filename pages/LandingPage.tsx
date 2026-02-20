@@ -10,6 +10,41 @@ interface LandingPageProps {
   setLang: (lang: Language) => void;
 }
 
+
+class Particle {
+    x: number;
+    y: number;
+    vx: number;
+    vy: number;
+    size: number;
+    width: number;
+    height: number;
+
+    constructor(width: number, height: number) {
+        this.width = width;
+        this.height = height;
+        this.x = Math.random() * width;
+        this.y = Math.random() * height;
+        this.vx = (Math.random() - 0.5) * 0.2;
+        this.vy = (Math.random() - 0.5) * 0.2;
+        this.size = Math.random() * 1.5 + 0.5;
+    }
+
+    update() {
+        this.x += this.vx;
+        this.y += this.vy;
+        if (this.x < 0 || this.x > this.width) this.vx *= -1;
+        if (this.y < 0 || this.y > this.height) this.vy *= -1;
+    }
+
+    draw(ctx: CanvasRenderingContext2D) {
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+        ctx.fillStyle = '#334155'; // Slate-700
+        ctx.fill();
+    }
+}
+
 // --- 1. OPTIMIZED PARTICLE NETWORK ---
 const ParticleNetwork: React.FC = () => {
     const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -30,45 +65,14 @@ const ParticleNetwork: React.FC = () => {
         const connectionDistance = isMobile ? 100 : 180;
         const mouseDistance = 250;
 
-        class Particle {
-            x: number;
-            y: number;
-            vx: number;
-            vy: number;
-            size: number;
-
-            constructor() {
-                this.x = Math.random() * width;
-                this.y = Math.random() * height;
-                this.vx = (Math.random() - 0.5) * 0.2;
-                this.vy = (Math.random() - 0.5) * 0.2;
-                this.size = Math.random() * 1.5 + 0.5;
-            }
-
-            update() {
-                this.x += this.vx;
-                this.y += this.vy;
-                if (this.x < 0 || this.x > width) this.vx *= -1;
-                if (this.y < 0 || this.y > height) this.vy *= -1;
-            }
-
-            draw() {
-                if (!ctx) return;
-                ctx.beginPath();
-                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-                ctx.fillStyle = '#334155'; // Slate-700
-                ctx.fill();
-            }
-        }
-
         const init = () => {
             particles = [];
             for (let i = 0; i < particleCount; i++) {
-                particles.push(new Particle());
+                particles.push(new Particle(width, height));
             }
         };
 
-        let mouse = { x: -1000, y: -1000 };
+        const mouse = { x: -1000, y: -1000 };
 
         const animate = () => {
             if (!ctx) return;
@@ -80,7 +84,7 @@ const ParticleNetwork: React.FC = () => {
             
             particles.forEach(p => {
                 p.update();
-                p.draw();
+                p.draw(ctx);
             });
 
             ctx.lineWidth = 0.5;
@@ -220,24 +224,24 @@ const GlitchText: React.FC<{ text: string }> = ({ text }) => {
 
 // --- LIVE TRANSACTION TICKER ---
 const LiveTicker = () => {
+    // Use fixed values or memoized values to avoid hydration mismatch
+    const tickerItems = [
+        { label: "SECURED", amount: "₹45,200", city: "JAIPUR", color: "bg-emerald-500" },
+        { label: "LOCKED", amount: "₹1,20,000", city: "MUMBAI", color: "bg-blue-500" },
+        { label: "DISPUTE RESOLVED", amount: "", city: "DELHI", color: "bg-amber-500" },
+        { label: "SECURED", amount: "₹12,500", city: "PUNE", color: "bg-emerald-500" },
+        { label: "LOCKED", amount: "₹85,000", city: "BANGALORE", color: "bg-blue-500" },
+        { label: "SECURED", amount: "₹32,000", city: "CHENNAI", color: "bg-emerald-500" }
+    ];
+
     return (
         <div className="w-full bg-black border-y border-slate-800 py-3 overflow-hidden relative z-20">
             <div className="flex gap-12 animate-marquee whitespace-nowrap">
-                {[1,2,3,4,5,6].map(i => (
-                    <React.Fragment key={i}>
-                        <div className="flex items-center gap-2 text-xs font-mono text-slate-400">
-                            <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-                            SECURED: ₹{Math.floor(Math.random() * 80000 + 10000).toLocaleString()} <span className="text-slate-600">|</span> JAIPUR
-                        </div>
-                        <div className="flex items-center gap-2 text-xs font-mono text-slate-400">
-                            <span className="w-2 h-2 rounded-full bg-blue-500 animate-pulse"></span>
-                            LOCKED: ₹{Math.floor(Math.random() * 500000 + 20000).toLocaleString()} <span className="text-slate-600">|</span> MUMBAI
-                        </div>
-                        <div className="flex items-center gap-2 text-xs font-mono text-slate-400">
-                            <span className="w-2 h-2 rounded-full bg-amber-500 animate-pulse"></span>
-                            DISPUTE RESOLVED <span className="text-slate-600">|</span> DELHI
-                        </div>
-                    </React.Fragment>
+                {tickerItems.map((item, i) => (
+                    <div key={i} className="flex items-center gap-2 text-xs font-mono text-slate-400">
+                        <span className={`w-2 h-2 rounded-full ${item.color} animate-pulse`}></span>
+                        {item.label}{item.amount && `: ${item.amount}`} <span className="text-slate-600">|</span> {item.city}
+                    </div>
                 ))}
             </div>
         </div>
@@ -320,17 +324,25 @@ const TrustSimulator = () => {
 };
 
 // --- SCROLLY VISUALS (Generative 3D Art) ---
-const VisualVoid = () => (
+const VisualVoid = () => {
+    // Generate deterministic positions based on index
+    const particles = [...Array(10)].map((_, i) => ({
+        top: `${(i * 13 + 7) % 100}%`,
+        left: `${(i * 29 + 3) % 100}%`,
+        animDuration: 2 + (i % 3)
+    }));
+
+    return (
     <div className="relative w-full max-w-sm aspect-square flex items-center justify-center animate-fade-in group">
         <div className="absolute inset-0 bg-gradient-to-tr from-red-500/10 to-transparent rounded-full blur-3xl animate-pulse"></div>
         {/* Generative 'Void' - Chaos */}
         <div className="relative z-10 w-64 h-64 bg-slate-900/50 rounded-full flex items-center justify-center border border-red-500/20 shadow-[0_0_50px_rgba(239,68,68,0.1)] group-hover:scale-105 transition-transform duration-700 backdrop-blur-sm overflow-hidden">
              {/* Random particles inside */}
-             {[...Array(10)].map((_, i) => (
+             {particles.map((p, i) => (
                  <div key={i} className="absolute w-2 h-2 bg-red-500/40 rounded-full" style={{
-                     top: `${Math.random() * 100}%`,
-                     left: `${Math.random() * 100}%`,
-                     animation: `float ${2 + Math.random() * 3}s infinite alternate`
+                     top: p.top,
+                     left: p.left,
+                     animation: `float ${p.animDuration}s infinite alternate`
                  }}></div>
              ))}
              <div className="text-center space-y-2 opacity-80 z-20">
@@ -343,7 +355,8 @@ const VisualVoid = () => (
             <div className="text-xs text-red-500 font-bold uppercase tracking-widest">Status: Lost</div>
         </div>
     </div>
-);
+    );
+};
 
 const VisualLock = () => (
     <div className="relative w-full max-w-sm aspect-square flex items-center justify-center animate-fade-in-up group">

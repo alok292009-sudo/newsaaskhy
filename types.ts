@@ -38,6 +38,7 @@ export interface User {
   name: string;
   mobile: string; // Acts as unique identifier for mobile auth
   email?: string; // For Google auth
+  emailVerified?: boolean;
   role: UserRole;
   business?: BusinessProfile;
   preferences?: UserPreferences;
