@@ -12,6 +12,8 @@ import { LandingPage } from './pages/LandingPage';
 import { Onboarding } from './pages/Onboarding';
 import { RecordDetail } from './pages/RecordDetail';
 import { ConfirmRecord } from './pages/ConfirmRecord';
+import { Partners } from './pages/Partners';
+import { Reports } from './pages/Reports';
 import { Language, User } from './types';
 import { getSessionUser, subscribeToAuth } from './services/authService';
 
@@ -58,6 +60,8 @@ export default function App() {
           <Route path="/dashboard" element={user ? <Dashboard lang={lang} /> : <Navigate to="/login" />} />
           <Route path="/create" element={user ? <CreateRecord lang={lang} /> : <Navigate to="/login" />} />
           <Route path="/record/:id" element={user ? <RecordDetail lang={lang} /> : <Navigate to="/login" />} />
+          <Route path="/partners" element={user ? <Partners lang={lang} /> : <Navigate to="/login" />} />
+          <Route path="/reports" element={user ? <Reports lang={lang} /> : <Navigate to="/login" />} />
           
           {/* The Confirmation Link (Accessible via link sharing) */}
           <Route path="/confirm/:id" element={<ConfirmRecord lang={lang} />} />

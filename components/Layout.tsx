@@ -162,35 +162,61 @@ export const Layout: React.FC<LayoutProps> = ({ children, currentLang, setLang, 
           </main>
 
           {/* MOBILE BOTTOM NAV (Hidden on Desktop) */}
-          <nav className="md:hidden bg-slate-900/90 backdrop-blur-xl border-t border-slate-800/50 fixed bottom-0 w-full z-40 pb-safe shadow-[0_-5px_20px_rgba(0,0,0,0.5)]">
-            <div className="flex justify-around items-center h-16">
-              <Link to="/" className={`flex flex-col items-center gap-1 w-full h-full justify-center transition-colors ${isActiveMobile('/dashboard')}`}>
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
-                </svg>
-                <span className="text-[10px] font-medium">{t.nav_dashboard}</span>
-              </Link>
-              
-              <Link to="/create" className={`flex flex-col items-center gap-1 w-full h-full justify-center group ${isActiveMobile('/create')}`}>
-                <div className="bg-blue-600 text-white rounded-full p-3 mb-5 border-4 border-slate-900 shadow-[0_0_20px_rgba(37,99,235,0.5)] active:scale-95 transition-transform group-hover:bg-blue-500 group-hover:-translate-y-1">
+          <nav className="md:hidden fixed bottom-0 w-full z-50 pb-safe">
+            {/* Glass Background with Gradient Border Top */}
+            <div className="absolute inset-0 bg-slate-900/90 backdrop-blur-xl border-t border-white/5 shadow-[0_-10px_40px_rgba(0,0,0,0.5)]"></div>
+            
+            <div className="relative grid grid-cols-5 h-[70px] items-end pb-2">
+              {/* Dashboard */}
+              <Link to="/" className="flex flex-col items-center justify-center gap-1 h-full group">
+                 <div className={`p-1.5 rounded-xl transition-all duration-300 ${location.pathname === '/dashboard' || location.pathname === '/' ? 'bg-blue-500/10 text-blue-400' : 'text-slate-400 group-hover:text-slate-200'}`}>
                     <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M12 4v16m8-8H4" />
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
                     </svg>
-                </div>
+                 </div>
+                 <span className={`text-[10px] font-medium transition-colors ${location.pathname === '/dashboard' || location.pathname === '/' ? 'text-blue-400' : 'text-slate-500'}`}>Home</span>
               </Link>
 
-              <Link to="/profile" className={`flex flex-col items-center gap-1 w-full h-full justify-center transition-colors ${isActiveMobile('/profile')}`}>
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                </svg>
-                <span className="text-[10px] font-medium">{t.nav_profile}</span>
+              {/* Partners */}
+              <Link to="/partners" className="flex flex-col items-center justify-center gap-1 h-full group">
+                 <div className={`p-1.5 rounded-xl transition-all duration-300 ${location.pathname === '/partners' ? 'bg-blue-500/10 text-blue-400' : 'text-slate-400 group-hover:text-slate-200'}`}>
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+                    </svg>
+                 </div>
+                 <span className={`text-[10px] font-medium transition-colors ${location.pathname === '/partners' ? 'text-blue-400' : 'text-slate-500'}`}>Partners</span>
               </Link>
               
-              <Link to="/more" className={`flex flex-col items-center gap-1 w-full h-full justify-center transition-colors ${isActiveMobile('/more')}`}>
-                 <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
-                </svg>
-                <span className="text-[10px] font-medium">{t.nav_more}</span>
+              {/* Create (FAB) - Floating above */}
+              <div className="flex justify-center h-full items-start -mt-6">
+                  <Link to="/create" className="group relative">
+                    <div className="absolute inset-0 bg-blue-500 rounded-2xl blur-lg opacity-40 group-hover:opacity-60 transition-opacity rotate-45"></div>
+                    <div className="w-14 h-14 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-2xl rotate-45 flex items-center justify-center shadow-xl border-4 border-slate-900 group-active:scale-95 transition-all duration-300 z-10 relative">
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-7 w-7 text-white -rotate-45" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M12 4v16m8-8H4" />
+                        </svg>
+                    </div>
+                  </Link>
+              </div>
+
+              {/* Profile */}
+              <Link to="/profile" className="flex flex-col items-center justify-center gap-1 h-full group">
+                 <div className={`p-1.5 rounded-xl transition-all duration-300 ${location.pathname === '/profile' ? 'bg-blue-500/10 text-blue-400' : 'text-slate-400 group-hover:text-slate-200'}`}>
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                    </svg>
+                 </div>
+                 <span className={`text-[10px] font-medium transition-colors ${location.pathname === '/profile' ? 'text-blue-400' : 'text-slate-500'}`}>Profile</span>
+              </Link>
+              
+              {/* More */}
+              <Link to="/more" className="flex flex-col items-center justify-center gap-1 h-full group">
+                 <div className={`p-1.5 rounded-xl transition-all duration-300 ${location.pathname === '/more' ? 'bg-blue-500/10 text-blue-400' : 'text-slate-400 group-hover:text-slate-200'}`}>
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+                    </svg>
+                 </div>
+                 <span className={`text-[10px] font-medium transition-colors ${location.pathname === '/more' ? 'text-blue-400' : 'text-slate-500'}`}>More</span>
               </Link>
             </div>
           </nav>

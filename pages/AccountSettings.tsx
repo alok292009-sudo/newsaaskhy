@@ -51,7 +51,7 @@ export const AccountSettings: React.FC<Props> = ({ lang }) => {
         if (user.preferences) {
             setPrefs(user.preferences);
         }
-    }, [navigate]);
+    }, [navigate, user]);
 
     const handleSave = async (e: React.FormEvent) => {
         e.preventDefault();

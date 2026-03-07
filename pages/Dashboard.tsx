@@ -127,11 +127,22 @@ export const Dashboard: React.FC<DashboardProps> = ({ lang }) => {
       let pendingCount = 0;
       let dueTodayCount = 0, dueTodayAmount = 0;
       let disputedCount = 0;
+      let totalReceivables = 0;
+      let totalPayables = 0;
       
       allRecords.forEach(r => {
           if (r.status === RecordStatus.PENDING_CONFIRMATION) pendingCount++;
           if (r.status === RecordStatus.DISPUTED) disputedCount++;
           
+          // Financials (Exclude Settled/Disputed for active exposure)
+          if (r.status !== RecordStatus.SETTLED && r.status !== RecordStatus.DISPUTED) {
+              if (r.role === 'SELLER') {
+                  totalReceivables += r.remainingAmount;
+              } else {
+                  totalPayables += r.remainingAmount;
+              }
+          }
+
           if (r.status === RecordStatus.CONFIRMED && r.dueDate) {
               if (r.dueDate < today) {
                   overdueCount++;
@@ -144,7 +155,7 @@ export const Dashboard: React.FC<DashboardProps> = ({ lang }) => {
           }
       });
 
-      return { overdueCount, overdueAmount, pendingCount, dueTodayCount, dueTodayAmount, disputedCount };
+      return { overdueCount, overdueAmount, pendingCount, dueTodayCount, dueTodayAmount, disputedCount, totalReceivables, totalPayables };
   }, [allRecords]);
 
   // 2. Behavioral Trust Snapshot
@@ -310,6 +321,15 @@ export const Dashboard: React.FC<DashboardProps> = ({ lang }) => {
                     onChange={(e) => setSearchQuery(e.target.value)}
                 />
             </div>
+
+            <button className="p-2.5 rounded-xl bg-slate-800/50 border border-slate-700/50 text-slate-400 hover:text-white hover:bg-slate-700 transition-all relative group">
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
+                </svg>
+                {(stats.overdueCount + stats.pendingCount) > 0 && (
+                    <span className="absolute top-2 right-2 w-2 h-2 bg-red-500 rounded-full animate-pulse"></span>
+                )}
+            </button>
             
             <Link to="/create" className="hidden md:flex px-5 py-2.5 bg-blue-600 rounded-xl text-sm text-white font-bold hover:bg-blue-500 shadow-[0_0_20px_rgba(37,99,235,0.3)] hover:-translate-y-0.5 transition-all items-center gap-2 group">
                 <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 group-hover:rotate-90 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -324,40 +344,41 @@ export const Dashboard: React.FC<DashboardProps> = ({ lang }) => {
           {/* --- 1. STATS OVERVIEW (Cards) --- */}
           <section className="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-6">
               
-              {/* CARD 1: ACTIVE */}
-              <div className="bg-slate-800/40 backdrop-blur-md p-5 rounded-2xl border border-slate-700/50 shadow-sm hover:border-slate-600 hover:bg-slate-800/60 transition-all duration-300 group relative overflow-hidden">
+              {/* CARD 1: RECEIVABLES (Credit Given) */}
+              <div className="bg-slate-800/40 backdrop-blur-md p-5 rounded-2xl border border-slate-700/50 shadow-sm hover:border-emerald-500/30 hover:bg-slate-800/60 transition-all duration-300 group relative overflow-hidden">
                   <div className="absolute top-0 right-0 p-3 opacity-5 group-hover:opacity-10 transition-opacity transform group-hover:scale-110 duration-500">
-                      <svg xmlns="http://www.w3.org/2000/svg" className="h-20 w-20 text-white" viewBox="0 0 20 20" fill="currentColor"><path fillRule="evenodd" d="M4 4a2 2 0 00-2 2v4a2 2 0 002 2V6h10a2 2 0 00-2-2H4zm2 6a2 2 0 012-2h8a2 2 0 012 2v4a2 2 0 01-2 2H8a2 2 0 01-2-2v-4zm6 4a1 1 0 100-2 1 1 0 000 2z" clipRule="evenodd" /></svg>
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-20 w-20 text-emerald-500" viewBox="0 0 20 20" fill="currentColor"><path fillRule="evenodd" d="M4 4a2 2 0 00-2 2v4a2 2 0 002 2V6h10a2 2 0 00-2-2H4zm2 6a2 2 0 012-2h8a2 2 0 012 2v4a2 2 0 01-2 2H8a2 2 0 01-2-2v-4zm6 4a1 1 0 100-2 1 1 0 000 2z" clipRule="evenodd" /></svg>
                   </div>
-                  <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Total Active</p>
-                  <p className="text-3xl font-black text-white mt-2 drop-shadow-sm">{allRecords.length}</p>
+                  <p className="text-[10px] font-bold text-emerald-400 uppercase tracking-widest">Receivables</p>
+                  <p className="text-2xl md:text-3xl font-black text-white mt-2 drop-shadow-sm">₹{stats.totalReceivables.toLocaleString()}</p>
                   <div className="mt-3 text-[10px] text-emerald-400/80 font-mono flex items-center gap-1">
-                      <span className="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse"></span> Live Sync
+                      <span className="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse"></span> Credit Given
                   </div>
               </div>
 
-              {/* CARD 2: ACTION REQUIRED */}
+              {/* CARD 2: PAYABLES (Credit Taken) */}
+              <div className="bg-slate-800/40 backdrop-blur-md p-5 rounded-2xl border border-slate-700/50 shadow-sm hover:border-red-500/30 hover:bg-slate-800/60 transition-all duration-300 group relative overflow-hidden">
+                  <div className="absolute top-0 right-0 p-3 opacity-5 group-hover:opacity-10 transition-opacity transform group-hover:rotate-12 duration-500">
+                     <svg xmlns="http://www.w3.org/2000/svg" className="h-20 w-20 text-red-500" viewBox="0 0 20 20" fill="currentColor"><path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd" /></svg>
+                  </div>
+                  <p className="text-[10px] font-bold text-red-400 uppercase tracking-widest">Payables</p>
+                  <p className="text-2xl md:text-3xl font-black text-white mt-2 drop-shadow-sm">₹{stats.totalPayables.toLocaleString()}</p>
+                  <div className="mt-3 text-[10px] text-red-400/80 font-mono flex items-center gap-1">
+                      <span className="w-1.5 h-1.5 bg-red-500 rounded-full animate-pulse"></span> Credit Taken
+                  </div>
+              </div>
+
+              {/* CARD 3: ACTION REQUIRED */}
               <div className="bg-gradient-to-br from-amber-900/10 to-slate-900/50 backdrop-blur-md p-5 rounded-2xl border border-amber-500/20 shadow-sm hover:border-amber-500/40 hover:bg-slate-800/60 transition-all duration-300 group relative overflow-hidden">
-                  <div className="absolute top-0 right-0 p-3 opacity-10 group-hover:opacity-20 transition-opacity transform group-hover:rotate-12 duration-500">
-                     <svg xmlns="http://www.w3.org/2000/svg" className="h-20 w-20 text-amber-500" viewBox="0 0 20 20" fill="currentColor"><path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd" /></svg>
+                  <div className="absolute top-0 right-0 p-3 opacity-10 group-hover:opacity-20 transition-opacity transform group-hover:-translate-y-2 duration-500">
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-20 w-20 text-amber-500" viewBox="0 0 20 20" fill="currentColor"><path d="M8.433 7.418c.155-.103.346-.196.567-.267v1.698a2.305 2.305 0 01-.567-.267C8.07 8.34 8 8.114 8 8c0-.114.07-.34.433-.582zM11 12.849v-1.698c.22.071.412.164.567.267.364.243.433.468.433.582 0 .114-.07.34-.433.582a2.305 2.305 0 01-.567.267z" /><path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-13a1 1 0 10-2 0v.092a4.535 4.535 0 00-1.676.662C6.602 6.234 6 7.009 6 8c0 .99.602 1.765 1.324 2.246.48.32 1.054.545 1.676.662v1.941c-.391-.127-.68-.312-.843-.504a1 1 0 10-1.51 1.31c.562.649 1.413 1.076 2.353 1.253V15a1 1 0 102 0v-.092a4.535 4.535 0 001.676-.662C13.398 13.766 14 12.991 14 12c0-.99-.602-1.765-1.324-2.246A4.535 4.535 0 0011 9.092V7.151c.391.127.68.312.843.504a1 1 0 101.511-1.31c-.563-.649-1.413-1.076-2.354-1.253V5z" clipRule="evenodd" /></svg>
                   </div>
                   <p className="text-[10px] font-bold text-amber-500/90 uppercase tracking-widest">Needs Attention</p>
                   <p className="text-3xl font-black text-amber-500 mt-2 drop-shadow-sm">{stats.overdueCount + stats.pendingCount + stats.disputedCount}</p>
-                  <div className="mt-3 flex gap-2">
+                  <div className="mt-3 flex gap-2 flex-wrap">
                       {stats.overdueCount > 0 && <span className="px-1.5 py-0.5 rounded bg-red-500/20 text-red-400 text-[9px] font-bold border border-red-500/20">{stats.overdueCount} Overdue</span>}
                       {stats.pendingCount > 0 && <span className="px-1.5 py-0.5 rounded bg-amber-500/20 text-amber-400 text-[9px] font-bold border border-amber-500/20">{stats.pendingCount} Pending</span>}
-                  </div>
-              </div>
-
-              {/* CARD 3: DUE TODAY */}
-              <div className="bg-slate-800/40 backdrop-blur-md p-5 rounded-2xl border border-slate-700/50 shadow-sm hover:border-blue-500/30 hover:bg-slate-800/60 transition-all duration-300 group relative overflow-hidden">
-                  <div className="absolute top-0 right-0 p-3 opacity-5 group-hover:opacity-10 transition-opacity transform group-hover:-translate-y-2 duration-500">
-                    <svg xmlns="http://www.w3.org/2000/svg" className="h-20 w-20 text-blue-500" viewBox="0 0 20 20" fill="currentColor"><path d="M8.433 7.418c.155-.103.346-.196.567-.267v1.698a2.305 2.305 0 01-.567-.267C8.07 8.34 8 8.114 8 8c0-.114.07-.34.433-.582zM11 12.849v-1.698c.22.071.412.164.567.267.364.243.433.468.433.582 0 .114-.07.34-.433.582a2.305 2.305 0 01-.567.267z" /><path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-13a1 1 0 10-2 0v.092a4.535 4.535 0 00-1.676.662C6.602 6.234 6 7.009 6 8c0 .99.602 1.765 1.324 2.246.48.32 1.054.545 1.676.662v1.941c-.391-.127-.68-.312-.843-.504a1 1 0 10-1.51 1.31c.562.649 1.413 1.076 2.353 1.253V15a1 1 0 102 0v-.092a4.535 4.535 0 001.676-.662C13.398 13.766 14 12.991 14 12c0-.99-.602-1.765-1.324-2.246A4.535 4.535 0 0011 9.092V7.151c.391.127.68.312.843.504a1 1 0 101.511-1.31c-.563-.649-1.413-1.076-2.354-1.253V5z" clipRule="evenodd" /></svg>
-                  </div>
-                  <p className="text-[10px] font-bold text-blue-400 uppercase tracking-widest">Due Today</p>
-                  <p className="text-3xl font-black text-blue-400 mt-2 drop-shadow-sm">₹{stats.dueTodayAmount.toLocaleString()}</p>
-                  <div className="mt-3 text-[10px] text-blue-300/70 font-medium">
-                      {stats.dueTodayCount > 0 ? `${stats.dueTodayCount} items due` : 'No obligations'}
+                      {stats.dueTodayCount > 0 && <span className="px-1.5 py-0.5 rounded bg-blue-500/20 text-blue-400 text-[9px] font-bold border border-blue-500/20">{stats.dueTodayCount} Due Today</span>}
                   </div>
               </div>
 
@@ -482,6 +503,28 @@ export const Dashboard: React.FC<DashboardProps> = ({ lang }) => {
                                    <span className="text-[10px] text-slate-500 group-hover:text-slate-400">View analytics</span>
                                </div>
                            </Link>
+                           <Link to="/partners" className="flex items-center gap-3 p-3 rounded-xl bg-slate-800 border border-slate-700/50 hover:bg-slate-700 hover:border-slate-600 transition-all group shadow-sm hover:shadow-md hover:-translate-y-0.5">
+                               <div className="w-10 h-10 rounded-lg bg-purple-500/10 text-purple-400 flex items-center justify-center group-hover:bg-purple-500 group-hover:text-white transition-colors border border-purple-500/20">
+                                   <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+                                   </svg>
+                               </div>
+                               <div>
+                                   <span className="text-sm font-bold text-slate-300 group-hover:text-white block">Partners</span>
+                                   <span className="text-[10px] text-slate-500 group-hover:text-slate-400">Counterparty list</span>
+                               </div>
+                           </Link>
+                           <Link to="/reports" className="flex items-center gap-3 p-3 rounded-xl bg-slate-800 border border-slate-700/50 hover:bg-slate-700 hover:border-slate-600 transition-all group shadow-sm hover:shadow-md hover:-translate-y-0.5">
+                               <div className="w-10 h-10 rounded-lg bg-amber-500/10 text-amber-400 flex items-center justify-center group-hover:bg-amber-500 group-hover:text-white transition-colors border border-amber-500/20">
+                                   <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                                   </svg>
+                               </div>
+                               <div>
+                                   <span className="text-sm font-bold text-slate-300 group-hover:text-white block">Reports</span>
+                                   <span className="text-[10px] text-slate-500 group-hover:text-slate-400">History & Export</span>
+                               </div>
+                           </Link>
                       </div>
                   </div>
 
@@ -509,7 +552,10 @@ export const Dashboard: React.FC<DashboardProps> = ({ lang }) => {
 
                   {/* COUNTERPARTY INTELLIGENCE */}
                   <div>
-                      <h3 className="font-bold text-slate-400 text-[10px] uppercase tracking-widest mb-3">Top Partners</h3>
+                      <div className="flex justify-between items-center mb-3">
+                          <h3 className="font-bold text-slate-400 text-[10px] uppercase tracking-widest">Top Partners</h3>
+                          <Link to="/partners" className="text-[10px] text-blue-400 hover:text-blue-300 font-bold">View All</Link>
+                      </div>
                       <div className="space-y-2">
                           {topPartners.map((partner, idx) => (
                               <div key={idx} className="flex items-center justify-between p-2.5 rounded-xl hover:bg-slate-800/50 transition-colors cursor-default border border-transparent hover:border-slate-800">
@@ -533,6 +579,17 @@ export const Dashboard: React.FC<DashboardProps> = ({ lang }) => {
               </div>
           </div>
       </div>
+      {/* Floating Action Button */}
+      <Link
+        to="/create"
+        className="hidden md:flex fixed bottom-6 right-6 z-50 p-4 bg-blue-600 text-white rounded-full shadow-[0_4px_20px_rgba(37,99,235,0.5)] hover:bg-blue-500 hover:scale-110 hover:shadow-[0_6px_25px_rgba(37,99,235,0.6)] transition-all duration-300 items-center justify-center group"
+        aria-label="Create New Record"
+      >
+        <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 group-hover:rotate-90 transition-transform duration-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+        </svg>
+      </Link>
+
       <style>{`
         @keyframes fadeInUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
         .animate-fade-in-up { animation: fadeInUp 0.4s ease-out forwards; opacity: 0; }

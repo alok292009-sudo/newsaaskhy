@@ -39,6 +39,7 @@ export const Login: React.FC<LoginProps> = ({ lang, setLang }) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [verificationSent, setVerificationSent] = useState(false);
   const [verificationEmail, setVerificationEmail] = useState('');
+  const [passwordStrength, setPasswordStrength] = useState(0);
   
   // Feedback
   const [errorMsg, setErrorMsg] = useState('');
@@ -75,6 +76,20 @@ export const Login: React.FC<LoginProps> = ({ lang, setLang }) => {
       setSuccessMsg('');
       setVerificationSent(false);
   }, [mode]);
+
+  // Calculate password strength
+  useEffect(() => {
+    let score = 0;
+    if (!password) {
+        setPasswordStrength(0);
+        return;
+    }
+    if (password.length > 5) score += 1;
+    if (password.length > 7) score += 1;
+    if (/[0-9]/.test(password)) score += 1;
+    if (/[^A-Za-z0-9]/.test(password)) score += 1;
+    setPasswordStrength(score);
+  }, [password]);
 
   const handleLogin = async (e: React.FormEvent) => {
       e.preventDefault();
@@ -287,6 +302,29 @@ export const Login: React.FC<LoginProps> = ({ lang, setLang }) => {
                             {showPassword ? 'Hide' : 'Show'}
                         </button>
                     </div>
+
+                    {/* Password Strength Indicator */}
+                    {mode === 'REGISTER' && password && (
+                        <div className="pt-2 animate-fade-in">
+                            <div className="flex gap-1 h-1 mb-1">
+                                {[1, 2, 3, 4].map((level) => (
+                                    <div 
+                                        key={level}
+                                        className={`h-full flex-1 rounded-full transition-all duration-300 ${
+                                            passwordStrength >= level 
+                                                ? (passwordStrength <= 1 ? 'bg-red-500' : passwordStrength === 2 ? 'bg-orange-500' : passwordStrength === 3 ? 'bg-yellow-500' : 'bg-emerald-500') 
+                                                : 'bg-slate-800'
+                                        }`}
+                                    ></div>
+                                ))}
+                            </div>
+                            <p className={`text-[10px] text-right font-bold uppercase tracking-wider transition-colors duration-300 ${
+                                passwordStrength <= 1 ? 'text-red-500' : passwordStrength === 2 ? 'text-orange-500' : passwordStrength === 3 ? 'text-yellow-500' : 'text-emerald-500'
+                            }`}>
+                                {passwordStrength <= 1 ? 'Weak' : passwordStrength === 2 ? 'Fair' : passwordStrength === 3 ? 'Good' : 'Strong'}
+                            </p>
+                        </div>
+                    )}
                 </div>
 
                 {/* Main Submit Button */}

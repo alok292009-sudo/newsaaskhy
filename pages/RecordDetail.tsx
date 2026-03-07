@@ -1,7 +1,7 @@
 
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { getRecordById, addPayment, raiseDispute } from '../services/dataService';
+import { getRecordById, addPayment, raiseDispute, getRecords } from '../services/dataService';
 import { getSessionUser } from '../services/authService';
 import { generateRecordSummary } from '../services/geminiService';
 import { TradeRecord, Language, EventType, RecordStatus } from '../types';
@@ -54,7 +54,20 @@ export const RecordDetail: React.FC<RecordDetailProps> = ({ lang }) => {
   const handleAiSummary = async () => {
     if (!record) return;
     setAiLoading(true);
-    const summary = await generateRecordSummary(record);
+
+    // Fetch history for context
+    let history: TradeRecord[] = [];
+    try {
+        const allRecords = await getRecords();
+        history = allRecords.filter(r => 
+            r.counterpartyName === record.counterpartyName || 
+            r.counterpartyMobile === record.counterpartyMobile
+        );
+    } catch (e) {
+        console.error("Failed to fetch history for AI context", e);
+    }
+
+    const summary = await generateRecordSummary(record, history);
     setAiSummary(summary);
     setAiTimestamp(new Date());
     setAiLoading(false);
