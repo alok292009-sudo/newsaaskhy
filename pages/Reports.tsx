@@ -33,72 +33,134 @@ const TradeDossier = ({ stats, user, records }: { stats: DossierStats | null, us
     .slice(0, 10);
 
   return (
-    <div id="trade-dossier" className="absolute top-[-9999px] left-[-9999px] print:static print:block p-10 w-[210mm] min-h-[297mm]" style={{ backgroundColor: '#ffffff', color: '#000000' }}>
+    <div id="trade-dossier" style={{
+      position: 'absolute',
+      top: '-9999px',
+      left: '-9999px',
+      padding: '40px',
+      width: '210mm',
+      minHeight: '297mm',
+      backgroundColor: '#ffffff',
+      color: '#000000',
+      fontFamily: 'sans-serif',
+      boxSizing: 'border-box'
+    }}>
       {/* Header */}
-      <div className="border-b-4 pb-6 mb-8 flex justify-between items-end" style={{ borderColor: '#0f172a' }}>
+      <div style={{
+        borderBottom: '4px solid #0f172a',
+        paddingBottom: '24px',
+        marginBottom: '32px',
+        display: 'flex',
+        justifyContent: 'space-between',
+        alignItems: 'flex-end'
+      }}>
         <div>
-           <h1 className="text-4xl font-black uppercase tracking-wider" style={{ color: '#0f172a' }}>Trade Dossier</h1>
-           <p className="text-sm mt-2 font-medium tracking-widest uppercase" style={{ color: '#64748b' }}>Verified Trust Report • SAAKSHY Protocol</p>
+           <h1 style={{
+             fontSize: '36px',
+             fontWeight: '900',
+             textTransform: 'uppercase',
+             letterSpacing: '0.05em',
+             color: '#0f172a',
+             margin: 0,
+             lineHeight: 1.2
+           }}>Trade Dossier</h1>
+           <p style={{
+             fontSize: '14px',
+             marginTop: '8px',
+             fontWeight: '500',
+             letterSpacing: '0.1em',
+             textTransform: 'uppercase',
+             color: '#64748b',
+             margin: '8px 0 0 0'
+           }}>Verified Trust Report • SAAKSHY Protocol</p>
         </div>
-        <div className="text-right">
-            <p className="font-bold text-xl" style={{ color: '#0f172a' }}>{user.name}</p>
-            <p className="text-base" style={{ color: '#475569' }}>{user.business?.businessName || 'Business Entity'}</p>
-            <p className="text-xs mt-2 font-mono" style={{ color: '#94a3b8' }}>Generated: {new Date().toLocaleDateString()}</p>
-            <p className="text-xs font-mono" style={{ color: '#94a3b8' }}>ID: {user.id.substring(0, 8)}...</p>
+        <div style={{ textAlign: 'right' }}>
+            <p style={{ fontWeight: '700', fontSize: '20px', color: '#0f172a', margin: 0 }}>{user.name}</p>
+            <p style={{ fontSize: '16px', color: '#475569', margin: 0 }}>{user.business?.businessName || 'Business Entity'}</p>
+            <p style={{ fontSize: '12px', marginTop: '8px', fontFamily: 'monospace', color: '#94a3b8', margin: '8px 0 0 0' }}>Generated: {new Date().toLocaleDateString()}</p>
+            <p style={{ fontSize: '12px', fontFamily: 'monospace', color: '#94a3b8', margin: 0 }}>ID: {user.id.substring(0, 8)}...</p>
         </div>
       </div>
 
       {/* Executive Summary */}
-      <div className="mb-10">
-        <h2 className="text-sm font-bold uppercase tracking-widest mb-4 border-b pb-2" style={{ color: '#94a3b8', borderColor: '#e2e8f0' }}>Executive Summary</h2>
-        <div className="grid grid-cols-4 gap-6">
-           <div className="p-4 border rounded-xl text-center" style={{ backgroundColor: '#f8fafc', borderColor: '#e2e8f0' }}>
-              <p className="text-[10px] uppercase font-bold mb-1" style={{ color: '#64748b' }}>Trust Score</p>
-              <p className="text-4xl font-black" style={{ color: '#0f172a' }}>{stats.trustScore}</p>
-              <div className="w-full h-1.5 mt-2 rounded-full overflow-hidden" style={{ backgroundColor: '#e2e8f0' }}>
-                  <div className="h-full" style={{ width: `${stats.trustScore}%`, backgroundColor: '#0f172a' }}></div>
+      <div style={{ marginBottom: '40px' }}>
+        <h2 style={{
+          fontSize: '14px',
+          fontWeight: '700',
+          textTransform: 'uppercase',
+          letterSpacing: '0.1em',
+          marginBottom: '16px',
+          borderBottom: '1px solid #e2e8f0',
+          paddingBottom: '8px',
+          color: '#94a3b8',
+          margin: '0 0 16px 0'
+        }}>Executive Summary</h2>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '24px' }}>
+           <div style={{ padding: '16px', border: '1px solid #e2e8f0', borderRadius: '12px', textAlign: 'center', backgroundColor: '#f8fafc' }}>
+              <p style={{ fontSize: '10px', textTransform: 'uppercase', fontWeight: '700', marginBottom: '4px', color: '#64748b', margin: '0 0 4px 0' }}>Trust Score</p>
+              <p style={{ fontSize: '36px', fontWeight: '900', color: '#0f172a', margin: 0 }}>{stats.trustScore}</p>
+              <div style={{ width: '100%', height: '6px', marginTop: '8px', borderRadius: '9999px', overflow: 'hidden', backgroundColor: '#e2e8f0' }}>
+                  <div style={{ height: '100%', width: `${stats.trustScore}%`, backgroundColor: '#0f172a' }}></div>
               </div>
            </div>
-           <div className="p-4 border rounded-xl text-center" style={{ backgroundColor: '#f8fafc', borderColor: '#e2e8f0' }}>
-              <p className="text-[10px] uppercase font-bold mb-1" style={{ color: '#64748b' }}>Total Volume</p>
-              <p className="text-2xl font-bold" style={{ color: '#0f172a' }}>₹{(stats.totalVolume / 1000).toFixed(1)}k</p>
-              <p className="text-[10px] mt-1" style={{ color: '#94a3b8' }}>Lifetime Value</p>
+           <div style={{ padding: '16px', border: '1px solid #e2e8f0', borderRadius: '12px', textAlign: 'center', backgroundColor: '#f8fafc' }}>
+              <p style={{ fontSize: '10px', textTransform: 'uppercase', fontWeight: '700', marginBottom: '4px', color: '#64748b', margin: '0 0 4px 0' }}>Total Volume</p>
+              <p style={{ fontSize: '24px', fontWeight: '700', color: '#0f172a', margin: 0 }}>₹{(stats.totalVolume / 1000).toFixed(1)}k</p>
+              <p style={{ fontSize: '10px', marginTop: '4px', color: '#94a3b8', margin: '4px 0 0 0' }}>Lifetime Value</p>
            </div>
-           <div className="p-4 border rounded-xl text-center" style={{ backgroundColor: '#f8fafc', borderColor: '#e2e8f0' }}>
-              <p className="text-[10px] uppercase font-bold mb-1" style={{ color: '#64748b' }}>Reliability</p>
-              <p className="text-2xl font-bold" style={{ color: '#0f172a' }}>{stats.onTimePercentage}%</p>
-              <p className="text-[10px] mt-1" style={{ color: '#94a3b8' }}>On-Time Payments</p>
+           <div style={{ padding: '16px', border: '1px solid #e2e8f0', borderRadius: '12px', textAlign: 'center', backgroundColor: '#f8fafc' }}>
+              <p style={{ fontSize: '10px', textTransform: 'uppercase', fontWeight: '700', marginBottom: '4px', color: '#64748b', margin: '0 0 4px 0' }}>Reliability</p>
+              <p style={{ fontSize: '24px', fontWeight: '700', color: '#0f172a', margin: 0 }}>{stats.onTimePercentage}%</p>
+              <p style={{ fontSize: '10px', marginTop: '4px', color: '#94a3b8', margin: '4px 0 0 0' }}>On-Time Payments</p>
            </div>
-           <div className="p-4 border rounded-xl text-center" style={{ backgroundColor: '#f8fafc', borderColor: '#e2e8f0' }}>
-              <p className="text-[10px] uppercase font-bold mb-1" style={{ color: '#64748b' }}>Network</p>
-              <p className="text-2xl font-bold" style={{ color: '#0f172a' }}>{stats.activePartners}</p>
-              <p className="text-[10px] mt-1" style={{ color: '#94a3b8' }}>Active Partners</p>
+           <div style={{ padding: '16px', border: '1px solid #e2e8f0', borderRadius: '12px', textAlign: 'center', backgroundColor: '#f8fafc' }}>
+              <p style={{ fontSize: '10px', textTransform: 'uppercase', fontWeight: '700', marginBottom: '4px', color: '#64748b', margin: '0 0 4px 0' }}>Network</p>
+              <p style={{ fontSize: '24px', fontWeight: '700', color: '#0f172a', margin: 0 }}>{stats.activePartners}</p>
+              <p style={{ fontSize: '10px', marginTop: '4px', color: '#94a3b8', margin: '4px 0 0 0' }}>Active Partners</p>
            </div>
         </div>
       </div>
 
       {/* Risk Profile */}
-      <div className="mb-10">
-         <h2 className="text-sm font-bold uppercase tracking-widest mb-4 border-b pb-2" style={{ color: '#94a3b8', borderColor: '#e2e8f0' }}>Risk Profile</h2>
-         <div className="grid grid-cols-2 gap-8">
+      <div style={{ marginBottom: '40px' }}>
+         <h2 style={{
+           fontSize: '14px',
+           fontWeight: '700',
+           textTransform: 'uppercase',
+           letterSpacing: '0.1em',
+           marginBottom: '16px',
+           borderBottom: '1px solid #e2e8f0',
+           paddingBottom: '8px',
+           color: '#94a3b8',
+           margin: '0 0 16px 0'
+         }}>Risk Profile</h2>
+         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '32px' }}>
             <div>
-                <div className="flex justify-between py-2 border-b" style={{ borderColor: '#f1f5f9' }}>
-                    <span className="text-sm font-medium" style={{ color: '#475569' }}>Account Age</span>
-                    <span className="text-sm font-bold" style={{ color: '#0f172a' }}>{stats.accountAgeDays} Days</span>
+                <div style={{ display: 'flex', justifyContent: 'space-between', padding: '8px 0', borderBottom: '1px solid #f1f5f9' }}>
+                    <span style={{ fontSize: '14px', fontWeight: '500', color: '#475569' }}>Account Age</span>
+                    <span style={{ fontSize: '14px', fontWeight: '700', color: '#0f172a' }}>{stats.accountAgeDays} Days</span>
                 </div>
-                <div className="flex justify-between py-2 border-b" style={{ borderColor: '#f1f5f9' }}>
-                    <span className="text-sm font-medium" style={{ color: '#475569' }}>Total Deals</span>
-                    <span className="text-sm font-bold" style={{ color: '#0f172a' }}>{stats.totalDeals}</span>
+                <div style={{ display: 'flex', justifyContent: 'space-between', padding: '8px 0', borderBottom: '1px solid #f1f5f9' }}>
+                    <span style={{ fontSize: '14px', fontWeight: '500', color: '#475569' }}>Total Deals</span>
+                    <span style={{ fontSize: '14px', fontWeight: '700', color: '#0f172a' }}>{stats.totalDeals}</span>
                 </div>
-                <div className="flex justify-between py-2 border-b" style={{ borderColor: '#f1f5f9' }}>
-                    <span className="text-sm font-medium" style={{ color: '#475569' }}>Dispute History</span>
-                    <span className="text-sm font-bold" style={{ color: stats.disputeCount > 0 ? '#dc2626' : '#059669' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', padding: '8px 0', borderBottom: '1px solid #f1f5f9' }}>
+                    <span style={{ fontSize: '14px', fontWeight: '500', color: '#475569' }}>Dispute History</span>
+                    <span style={{ fontSize: '14px', fontWeight: '700', color: stats.disputeCount > 0 ? '#dc2626' : '#059669' }}>
                         {stats.disputeCount} Record(s)
                     </span>
                 </div>
             </div>
-            <div className="p-4 rounded-xl border text-xs leading-relaxed" style={{ backgroundColor: '#f8fafc', borderColor: '#f1f5f9', color: '#64748b' }}>
-                <p className="font-bold mb-2" style={{ color: '#334155' }}>Assessment Note:</p>
+            <div style={{
+              padding: '16px',
+              borderRadius: '12px',
+              border: '1px solid #f1f5f9',
+              fontSize: '12px',
+              lineHeight: '1.625',
+              backgroundColor: '#f8fafc',
+              color: '#64748b'
+            }}>
+                <p style={{ fontWeight: '700', marginBottom: '8px', color: '#334155', margin: '0 0 8px 0' }}>Assessment Note:</p>
                 This entity has maintained a {stats.onTimePercentage}% on-time payment record over {stats.totalDeals} transactions. 
                 {stats.disputeCount === 0 ? " No disputes have been recorded against this profile." : ` ${stats.disputeCount} dispute(s) have been noted in the history.`}
                 The verified volume indicates a {stats.totalVolume > 100000 ? "high" : "growing"} level of commercial activity.
@@ -107,28 +169,44 @@ const TradeDossier = ({ stats, user, records }: { stats: DossierStats | null, us
       </div>
 
       {/* Recent Transactions */}
-      <div className="mb-10">
-         <h2 className="text-sm font-bold uppercase tracking-widest mb-4 border-b pb-2" style={{ color: '#94a3b8', borderColor: '#e2e8f0' }}>Recent Verified Transactions</h2>
-         <table className="w-full text-left text-sm">
+      <div style={{ marginBottom: '40px' }}>
+         <h2 style={{
+           fontSize: '14px',
+           fontWeight: '700',
+           textTransform: 'uppercase',
+           letterSpacing: '0.1em',
+           marginBottom: '16px',
+           borderBottom: '1px solid #e2e8f0',
+           paddingBottom: '8px',
+           color: '#94a3b8',
+           margin: '0 0 16px 0'
+         }}>Recent Verified Transactions</h2>
+         <table style={{ width: '100%', textAlign: 'left', fontSize: '14px', borderCollapse: 'collapse' }}>
              <thead>
                  <tr style={{ backgroundColor: '#f1f5f9', color: '#475569' }}>
-                     <th className="p-2 font-bold text-xs uppercase">Date</th>
-                     <th className="p-2 font-bold text-xs uppercase">Counterparty</th>
-                     <th className="p-2 font-bold text-xs uppercase">Amount</th>
-                     <th className="p-2 font-bold text-xs uppercase">Status</th>
+                     <th style={{ padding: '8px', fontWeight: '700', fontSize: '12px', textTransform: 'uppercase' }}>Date</th>
+                     <th style={{ padding: '8px', fontWeight: '700', fontSize: '12px', textTransform: 'uppercase' }}>Counterparty</th>
+                     <th style={{ padding: '8px', fontWeight: '700', fontSize: '12px', textTransform: 'uppercase' }}>Amount</th>
+                     <th style={{ padding: '8px', fontWeight: '700', fontSize: '12px', textTransform: 'uppercase' }}>Status</th>
                  </tr>
              </thead>
-             <tbody className="divide-y" style={{ borderColor: '#f1f5f9' }}>
+             <tbody>
                  {recentTrades.map(record => (
-                     <tr key={record.id}>
-                         <td className="p-2 font-mono" style={{ color: '#64748b' }}>{new Date(record.createdAt).toLocaleDateString()}</td>
-                         <td className="p-2 font-bold" style={{ color: '#1e293b' }}>{record.counterpartyName}</td>
-                         <td className="p-2 font-mono" style={{ color: '#334155' }}>₹{record.originalAmount.toLocaleString()}</td>
-                         <td className="p-2">
-                             <span className="text-[10px] font-bold px-2 py-0.5 rounded-full border" style={{
+                     <tr key={record.id} style={{ borderBottom: '1px solid #f1f5f9' }}>
+                         <td style={{ padding: '8px', fontFamily: 'monospace', color: '#64748b' }}>{new Date(record.createdAt).toLocaleDateString()}</td>
+                         <td style={{ padding: '8px', fontWeight: '700', color: '#1e293b' }}>{record.counterpartyName}</td>
+                         <td style={{ padding: '8px', fontFamily: 'monospace', color: '#334155' }}>₹{record.originalAmount.toLocaleString()}</td>
+                         <td style={{ padding: '8px' }}>
+                             <span style={{
+                                 fontSize: '10px',
+                                 fontWeight: '700',
+                                 padding: '2px 8px',
+                                 borderRadius: '9999px',
+                                 border: '1px solid',
                                  backgroundColor: record.status === RecordStatus.SETTLED ? '#ecfdf5' : record.status === RecordStatus.DISPUTED ? '#fef2f2' : '#fffbeb',
                                  color: record.status === RecordStatus.SETTLED ? '#059669' : record.status === RecordStatus.DISPUTED ? '#dc2626' : '#d97706',
-                                 borderColor: record.status === RecordStatus.SETTLED ? '#a7f3d0' : record.status === RecordStatus.DISPUTED ? '#fecaca' : '#fde68a'
+                                 borderColor: record.status === RecordStatus.SETTLED ? '#a7f3d0' : record.status === RecordStatus.DISPUTED ? '#fecaca' : '#fde68a',
+                                 display: 'inline-block'
                              }}>
                                  {record.status.replace('_', ' ')}
                              </span>
@@ -140,9 +218,18 @@ const TradeDossier = ({ stats, user, records }: { stats: DossierStats | null, us
       </div>
       
       {/* Footer */}
-      <div className="mt-auto pt-6 border-t-2 text-center" style={{ borderColor: '#f1f5f9' }}>
-         <p className="text-xs font-mono mb-2" style={{ color: '#94a3b8' }}>Cryptographically verifiable via SAAKSHY Protocol • {new Date().toISOString()}</p>
-         <div className="flex justify-center gap-4 text-[10px] uppercase tracking-widest" style={{ color: '#cbd5e1' }}>
+      <div style={{
+        marginTop: 'auto',
+        paddingTop: '24px',
+        borderTop: '2px solid #f1f5f9',
+        textAlign: 'center',
+        position: 'absolute',
+        bottom: '40px',
+        left: '40px',
+        right: '40px'
+      }}>
+         <p style={{ fontSize: '12px', fontFamily: 'monospace', marginBottom: '8px', color: '#94a3b8', margin: '0 0 8px 0' }}>Cryptographically verifiable via SAAKSHY Protocol • {new Date().toISOString()}</p>
+         <div style={{ display: 'flex', justifyContent: 'center', gap: '16px', fontSize: '10px', textTransform: 'uppercase', letterSpacing: '0.1em', color: '#cbd5e1' }}>
              <span>Confidential</span>
              <span>•</span>
              <span>Verified</span>
